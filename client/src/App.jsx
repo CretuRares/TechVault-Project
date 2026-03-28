@@ -5,6 +5,9 @@ import { LuRadioReceiver } from "react-icons/lu";
 import Auth from './Auth';
 import EditProductModal from './EditProductModal';
 import AddProductModal from './AddProductModal'; 
+import Cart from './Cart';
+
+
 
 function App() {
   const [user, setUser] = useState(null); 
@@ -13,7 +16,8 @@ function App() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('Toate');
   const [showAddModal, setShowAddModal] = useState(false); // Stare pentru adăugare
-  
+  const [cartItems, setCartItems] = useState([]); 
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null); 
   const [showEditModal, setShowEditModal] = useState(false); 
 
@@ -29,6 +33,24 @@ function App() {
         setProducts(res.data); 
       })
       .catch(err => console.error("Eroare la refresh produse:", err));
+  };
+
+  const addToCart = (product) => {
+    if (product.stock <= 0) {
+      alert("Acest produs nu mai este în stoc!");
+      return;
+    }
+
+    setCartItems(prev => {
+      const existing = prev.find(item => item.id === product.id);
+      if (existing) {
+        return prev.map(item =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+    setIsCartOpen(true); // Deschim coșul automat la adăugare
   };
 
   // Funcția pentru trimiterea produsului nou la server
@@ -88,10 +110,54 @@ function App() {
 
   // Verificăm dacă userul este Admin (pentru scurtătură în cod)
   const isAdmin = user && (user.role?.name === 'ADMIN' || user.role === 'ADMIN');
+  
+const handleCheckout = async () => {
+    if (!user) {
+      alert("Trebuie să fii logat pentru a finaliza comanda!");
+      setShowAuth(true);
+      return;
+    }
 
-  return (
+    if (cartItems.length === 0) {
+      alert("Coșul tău este gol!");
+      return;
+    }
+
+    try {
+      const orderData = cartItems.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }));
+
+      const response = await axios.post(`http://localhost:8080/api/products/checkout/${user.id}`, orderData);
+
+      setUser(response.data); // Actualizăm punctele userului
+      setCartItems([]);
+      setIsCartOpen(false);
+      
+      alert("🎉 Comandă reușită! Ai primit puncte de loialitate.");
+      fetchProducts(); // Actualizăm stocurile vizuale în pagină
+
+    } catch (err) {
+      console.error("Eroare la checkout:", err);
+      alert(err.response?.data || "A apărut o eroare la procesarea comenzii.");
+    }
+  };
+
+ return (
     <div className="app-container">
-      {/* MODALE */}
+      {/* 1. MODAL COȘ */}
+      {isCartOpen && (
+        <Cart 
+          cartItems={cartItems} 
+          onClose={() => setIsCartOpen(false)} 
+          user={user}
+          onCheckout={handleCheckout}
+          setCartItems={setCartItems}
+        />
+      )}
+
+      {/* 2. MODAL AUTENTIFICARE */}
       {showAuth && (
         <div className="auth-overlay">
           <div className="auth-modal">
@@ -104,6 +170,7 @@ function App() {
         </div>
       )}
 
+      {/* 3. MODAL EDITARE PRODUS */}
       {showEditModal && productToEdit && (
         <EditProductModal 
           product={productToEdit} 
@@ -113,7 +180,7 @@ function App() {
         />
       )}
 
-      {/* 2. RANDARE MODAL ADĂUGARE */}
+      {/* 4. MODAL ADĂUGARE PRODUS */}
       {showAddModal && (
         <AddProductModal 
           categories={categories}
@@ -122,22 +189,34 @@ function App() {
         />
       )}
 
-      <header className="main-header">
-        <div className="top-bar">
+     <header className="main-header">
+      <div className="top-bar">
+        {/* PARTEA STÂNGĂ: AUTENTIFICARE */}
+        <div className="auth-side">
           {user ? (
             <div className="user-info-box">
               <span className="user-name">Salut, <strong>{user.username}</strong></span>
-              {isAdmin ? (
-                <span className="admin-badge">ADMINISTRATOR</span>
-              ) : (
-                <span className="user-points">⭐ {user.points || 0} pct</span>
-              )}
+              {!isAdmin && <span className="user-points">⭐ {user.points || 0} pct</span>}
+              {isAdmin && <span className="admin-badge">ADMIN</span>}
               <button className="logout-btn" onClick={handleLogout}>Ieșire</button>
             </div>
           ) : (
             <button className="login-btn" onClick={() => setShowAuth(true)}>Autentificare</button>
           )}
         </div>
+
+        {/* PARTEA DREAPTĂ: COȘUL */}
+        <div className="cart-side">
+          {!isAdmin && (
+            <button className="cart-icon-btn" onClick={() => setIsCartOpen(true)}>
+              <span className="cart-label">Coșul meu</span>
+              <div className="cart-icon-wrapper">
+                🛒 <span className="cart-count">{cartItems.length}</span>
+              </div>
+            </button>
+          )}
+        </div>
+      </div>
 
         <div className="logo-section">
           <LuRadioReceiver className="tech-logo-icon" />
@@ -147,19 +226,22 @@ function App() {
         
         <nav className="category-nav">
           {categories.map(cat => (
-            <button key={cat} className={`nav-btn ${activeCategory === cat ? 'active' : ''}`} onClick={() => handleFilter(cat)}>
+            <button 
+              key={cat} 
+              className={`nav-btn ${activeCategory === cat ? 'active' : ''}`} 
+              onClick={() => handleFilter(cat)}
+            >
               {cat}
             </button>
           ))}
           
-          {/* 3. BUTON ADĂUGARE PRODUS (DOAR PENTRU ADMIN) */}
           {isAdmin && (
             <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
               + Produs Nou
             </button>
           )}
         </nav>
-      </header>
+    </header>
 
       <main className="product-grid">
         {filteredProducts.map(p => (
@@ -176,7 +258,7 @@ function App() {
                 {isAdmin ? (
                   <button className="admin-edit-btn" onClick={() => openEditModal(p)}>⚙️ Modifică</button>
                 ) : (
-                  <button className="buy-btn">🛒</button>
+                  <button className="buy-btn" onClick={() => addToCart(p)}>🛒</button>
                 )}
               </div>
             </div>
@@ -186,5 +268,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
