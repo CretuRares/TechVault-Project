@@ -1,0 +1,105 @@
+/* Containerul principal al cardului */
+.auth-card {
+    background: rgba(15, 23, 42, 0.95); /* Albastru foarte închis, aproape opac */
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 2px solid #38bdf8; /* Albastru neon (accentul tău) */
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.15), 
+                inset 0 0 10px rgba(56, 189, 248, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+/* Titlul (LOGARE / CONT NOU) */
+.auth-card h2 {
+    color: #38bdf8;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+/* Stil pentru input-uri */
+.auth-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: #f8fafc;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    box-sizing: border-box; /* Previne lărgirea input-ului */
+}
+
+.auth-input:focus {
+    border-color: #38bdf8;
+    background: rgba(30, 41, 59, 0.8);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+}
+
+/* Mesajul de eroare */
+.error-msg {
+    color: #ef4444; /* Roșu alertă */
+    background: rgba(239, 68, 68, 0.1);
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin: 10px 0;
+    border-left: 3px solid #ef4444;
+    animation: shake 0.4s ease-in-out;
+}
+
+/* Butonul principal */
+.auth-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 1.5rem;
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    color: #0f172a;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4);
+}
+
+.auth-btn:active {
+    transform: translateY(0);
+}
+
+/* Link-ul de switch între Login și Register */
+.toggle-auth {
+    margin-top: 1.5rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.toggle-auth:hover {
+    color: #38bdf8;
+    text-decoration: underline;
+}
+
+/* Animație pentru eroare */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
