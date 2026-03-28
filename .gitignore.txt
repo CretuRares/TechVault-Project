@@ -1,6 +1,0 @@
-node_modules/
-target/
-.env
-.idea/
-.vscode/
-*.class
