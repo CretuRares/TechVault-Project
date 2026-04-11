@@ -92,7 +92,7 @@ public class ProductController {
             totalOrder = totalOrder.add(product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
-        // 4. Calculăm punctele și salvăm (tot cu literă mică!)
+        // 4. Calculăm punctele și salvăm
        // Varianta corectă: folosim .divide() și BigDecimal.valueOf(10)
         int pointsGained = totalOrder.divide(BigDecimal.valueOf(10), RoundingMode.HALF_UP).intValue();
         user.setPoints((user.getPoints() != null ? user.getPoints() : 0) + pointsGained);

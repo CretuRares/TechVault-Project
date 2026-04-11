@@ -10,6 +10,7 @@ import Cart from './Cart';
 
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState(null); 
   const [showAuth, setShowAuth] = useState(false); 
   const [products, setProducts] = useState([]);
@@ -20,6 +21,7 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null); 
   const [showEditModal, setShowEditModal] = useState(false); 
+  const [maxPrice, setMaxPrice] = useState(20000); 
 
   const categories = ['Toate', 'Procesoare', 'Placi Video', 'Carcase', 'Memorii RAM', 'Stocare'];
 
@@ -96,13 +98,24 @@ function App() {
   };
 
   useEffect(() => {
-    if (activeCategory === 'Toate') {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter(p => p.category === activeCategory);
-      setFilteredProducts(filtered);
+    let result = products;
+    // 1. Filtru Categorie
+    if (activeCategory !== 'Toate') {
+      result = result.filter(p => p.category === activeCategory);
     }
-  }, [products, activeCategory]);
+
+    // 2. Filtru Search
+    if (searchTerm) {
+      result = result.filter(p => 
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // 3. Filtru Preț (Adăugat acum)
+    result = result.filter(p => p.price <= maxPrice);
+
+    setFilteredProducts(result);
+  }, [products, activeCategory, searchTerm, maxPrice]);
 
   const handleLogout = () => {
     setUser(null);
@@ -145,51 +158,51 @@ const handleCheckout = async () => {
   };
 
  return (
-    <div className="app-container">
-      {/* 1. MODAL COȘ */}
-      {isCartOpen && (
-        <Cart 
-          cartItems={cartItems} 
-          onClose={() => setIsCartOpen(false)} 
-          user={user}
-          onCheckout={handleCheckout}
-          setCartItems={setCartItems}
-        />
-      )}
+  <div className="app-container">
+    {/* 1. MODAL COȘ */}
+    {isCartOpen && (
+      <Cart 
+        cartItems={cartItems} 
+        onClose={() => setIsCartOpen(false)} 
+        user={user}
+        onCheckout={handleCheckout}
+        setCartItems={setCartItems}
+      />
+    )}
 
-      {/* 2. MODAL AUTENTIFICARE */}
-      {showAuth && (
-        <div className="auth-overlay">
-          <div className="auth-modal">
-            <button className="close-btn" onClick={() => setShowAuth(false)}>×</button>
-            <Auth onLoginSuccess={(userData) => {
-              setUser(userData);
-              setShowAuth(false);
-            }} />
-          </div>
+    {/* 2. MODAL AUTENTIFICARE */}
+    {showAuth && (
+      <div className="auth-overlay">
+        <div className="auth-modal">
+          <button className="close-btn" onClick={() => setShowAuth(false)}>×</button>
+          <Auth onLoginSuccess={(userData) => {
+            setUser(userData);
+            setShowAuth(false);
+          }} />
         </div>
-      )}
+      </div>
+    )}
 
-      {/* 3. MODAL EDITARE PRODUS */}
-      {showEditModal && productToEdit && (
-        <EditProductModal 
-          product={productToEdit} 
-          onClose={() => setShowEditModal(false)} 
-          onSave={handleUpdateProduct}
-          onDelete={handleDeleteProduct}
-        />
-      )}
+    {/* 3. MODAL EDITARE PRODUS */}
+    {showEditModal && productToEdit && (
+      <EditProductModal 
+        product={productToEdit} 
+        onClose={() => setShowEditModal(false)} 
+        onSave={handleUpdateProduct}
+        onDelete={handleDeleteProduct}
+      />
+    )}
 
-      {/* 4. MODAL ADĂUGARE PRODUS */}
-      {showAddModal && (
-        <AddProductModal 
-          categories={categories}
-          onClose={() => setShowAddModal(false)}
-          onSave={handleAddProduct}
-        />
-      )}
+    {/* 4. MODAL ADĂUGARE PRODUS */}
+    {showAddModal && (
+      <AddProductModal 
+        categories={categories}
+        onClose={() => setShowAddModal(false)}
+        onSave={handleAddProduct}
+      />
+    )}
 
-     <header className="main-header">
+    <header className="main-header">
       <div className="top-bar">
         {/* PARTEA STÂNGĂ: AUTENTIFICARE */}
         <div className="auth-side">
@@ -201,15 +214,27 @@ const handleCheckout = async () => {
               <button className="logout-btn" onClick={handleLogout}>Ieșire</button>
             </div>
           ) : (
-            <button className="login-btn" onClick={() => setShowAuth(true)}>Autentificare</button>
+            <button className="login-btn" onClick={() => setShowAuth(true)}>AUTENTIFICARE</button>
           )}
+        </div>
+
+        {/* SEARCH BAR - RĂMÂNE SUS ÎNTRE ELE */}
+        <div className="search-container">
+          <input 
+            type="text" 
+            placeholder="Caută componente..." 
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <span className="search-icon">🔍</span>
         </div>
 
         {/* PARTEA DREAPTĂ: COȘUL */}
         <div className="cart-side">
           {!isAdmin && (
             <button className="cart-icon-btn" onClick={() => setIsCartOpen(true)}>
-              <span className="cart-label">Coșul meu</span>
+              <span className="cart-label">COȘUL MEU</span>
               <div className="cart-icon-wrapper">
                 🛒 <span className="cart-count">{cartItems.length}</span>
               </div>
@@ -218,54 +243,70 @@ const handleCheckout = async () => {
         </div>
       </div>
 
-        <div className="logo-section">
-          <LuRadioReceiver className="tech-logo-icon" />
-          <h1 className="main-title">TECH<span>VAULT</span></h1>
-        </div>
-        <p className="subtitle">High-End Hardware for Enthusiasts</p>
+      <div className="logo-section">
+        <LuRadioReceiver className="tech-logo-icon" />
+        <h1 className="main-title">TECH<span>VAULT</span></h1>
+      </div>
+      <p className="subtitle">High-End Hardware for Enthusiasts</p>
+
+      <nav className="category-nav">
+        {categories.map(cat => (
+          <button 
+            key={cat} 
+            className={`nav-btn ${activeCategory === cat ? 'active' : ''}`} 
+            onClick={() => handleFilter(cat)}
+          >
+            {cat}
+          </button>
+        ))}
         
-        <nav className="category-nav">
-          {categories.map(cat => (
-            <button 
-              key={cat} 
-              className={`nav-btn ${activeCategory === cat ? 'active' : ''}`} 
-              onClick={() => handleFilter(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-          
-          {isAdmin && (
-            <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
-              + Produs Nou
-            </button>
-          )}
-        </nav>
+        {isAdmin && (
+          <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
+            + Produs Nou
+          </button>
+        )}
+      </nav>
+
+      {/* FILTRU PREȚ - SUB CATEGORII, ALINIAT PE CENTRU */}
+      <div className="price-filter-center">
+        <div className="price-filter-container">
+          <label>Preț maxim: <span>{maxPrice} RON</span></label>
+          <input 
+            type="range" 
+            min="0" 
+            max="20000" 
+            step="100"
+            value={maxPrice} 
+            onChange={(e) => setMaxPrice(Number(e.target.value))}
+            className="price-slider"
+          />
+        </div>
+      </div>
     </header>
 
-      <main className="product-grid">
-        {filteredProducts.map(p => (
-          <div key={p.id} className="product-card">
-            <div className="badge">{p.category}</div>
-            <div className="img-container">
-              <img src={p.imageUrl || 'https://via.placeholder.com/150'} alt={p.name} />
-            </div>
-            <div className="product-info">
-              <h3>{p.name}</h3>
-              <p className="description">{p.description}</p>
-              <div className="price-row">
-                <span className="price">{p.price} <small>RON</small></span>
-                {isAdmin ? (
-                  <button className="admin-edit-btn" onClick={() => openEditModal(p)}>⚙️ Modifică</button>
-                ) : (
-                  <button className="buy-btn" onClick={() => addToCart(p)}>🛒</button>
-                )}
-              </div>
+    <main className="product-grid">
+      {filteredProducts.map(p => (
+        <div key={p.id} className="product-card">
+          <div className="badge">{p.category}</div>
+          <div className="img-container">
+            <img src={p.imageUrl || 'https://via.placeholder.com/150'} alt={p.name} />
+          </div>
+          <div className="product-info">
+            <h3>{p.name}</h3>
+            <p className="description">{p.description}</p>
+            <div className="price-row">
+              <span className="price">{p.price} <small>RON</small></span>
+              {isAdmin ? (
+                <button className="admin-edit-btn" onClick={() => openEditModal(p)}>⚙️ Modifică</button>
+              ) : (
+                <button className="buy-btn" onClick={() => addToCart(p)}>🛒</button>
+              )}
             </div>
           </div>
-        ))}
-      </main>
-    </div>
-  );
+        </div>
+      ))}
+    </main>
+  </div>
+);
 }
 export default App;

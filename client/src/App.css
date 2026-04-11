@@ -1,11 +1,23 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden; /* Taie orice conținut care depășește lățimea ecranului */
+    margin: 0;
+    padding: 0;
+}
+
 :root {
   --bg-dark: #0f172a;
   --card-bg: #1e293b;
-  --accent: #38bdf8;
-  --danger: #ef4444;
+  --accent: #38bdf8; /* Blue Neon */
+  --danger: #ef4444; /* Roșu */
   --text-main: #f8fafc;
+  --success: #10b981; /* Verde Admin */
+  --warning: #eab308; /* Auriu Edit */
 }
 
+/* ==========================================
+   BAZĂ ȘI LAYOUT
+   ========================================== */
 body {
   background-color: var(--bg-dark);
   color: var(--text-main);
@@ -14,28 +26,36 @@ body {
 }
 
 .app-container {
-  min-height: 100vh;
-  padding-bottom: 50px;
+    width: 100%; /* Folosește 100% în loc de 100vw */
+    overflow-x: hidden;
 }
 
 /* ==========================================
-   BARA DE SUS (TOP BAR) - ALINIERE
+   TOP BAR (CONT & SEARCH & COȘ)
    ========================================== */
 .top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  width: 100%;
-  box-sizing: border-box;
-  position: absolute;
-  top: 0;
-  z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    width: 100%;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    z-index: 100;
+    /* Permite elementelor să treacă pe rândul următor dacă nu au loc */
+    flex-wrap: wrap; 
+    gap: 15px;
 }
 
-/* BUTOANELE NEON (Login și Coș) */
-.login-btn,
-.cart-icon-btn {
+.auth-side, .cart-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Butoane Stil Pastilă Neon */
+.login-btn, .cart-icon-btn {
   background: var(--bg-dark);
   border: 1px solid var(--accent);
   color: var(--accent);
@@ -53,14 +73,47 @@ body {
   letter-spacing: 1px;
 }
 
-.login-btn:hover,
-.cart-icon-btn:hover {
+.login-btn:hover, .cart-icon-btn:hover {
   background: var(--accent);
   color: var(--bg-dark);
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
 }
 
-/* PASTILA UTILIZATOR (STÂNGA) */
+/* Search Bar (Rămâne sus) */
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 350px; /* Limita pe PC */
+    margin: 0 20px;
+    transition: all 0.3s ease;
+}
+
+.search-input {
+    width: 100%;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 10px 15px 10px 40px;
+    border-radius: 20px;
+    color: white;
+    outline: none;
+    box-sizing: border-box; /* FOARTE IMPORTANT: previne întinderea extra */
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* User Info Box */
 .user-info-box {
   display: flex;
   align-items: center;
@@ -81,17 +134,15 @@ body {
   font-weight: 800;
 }
 
-/* BUTON IEȘIRE */
 .logout-btn {
   background: transparent;
   border: 1px solid var(--danger);
   color: var(--danger);
   padding: 6px 16px;
   border-radius: 20px;
-  font-size: 0.8rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
 .logout-btn:hover {
@@ -100,12 +151,8 @@ body {
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
 }
 
-/* BADGE COȘ */
-.cart-icon-wrapper {
-  position: relative;
-  font-size: 1.2rem;
-}
-
+/* Coș Badge */
+.cart-icon-wrapper { position: relative; font-size: 1.2rem; }
 .cart-count {
   background: var(--danger);
   color: white;
@@ -114,18 +161,16 @@ body {
   padding: 2px 7px;
   border-radius: 10px;
   position: absolute;
-  top: -10px;
-  right: -12px;
-  transition: 0.3s;
+  top: -10px; right: -12px;
   border: 2px solid var(--bg-dark);
 }
 
 /* ==========================================
-   HEADER & LOGO
+   HEADER, LOGO ȘI FILTRE CENTRATE
    ========================================== */
 .main-header {
   text-align: center;
-  padding: 100px 20px 60px;
+  padding: 120px 20px 60px;
   background: linear-gradient(to bottom, #1e293b, #0f172a);
 }
 
@@ -145,14 +190,13 @@ body {
 .main-title {
   font-size: 4rem;
   margin: 0;
-  color: white; 
+  color: white;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Acesta este stilul pentru cuvântul VAULT */
 .main-title span {
   background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%);
   -webkit-background-clip: text;
@@ -160,10 +204,11 @@ body {
   -webkit-text-fill-color: transparent;
   font-weight: 900;
   filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3));
-  margin-left: 5px; /* Spațiu mic între TECH și VAULT */
+  margin-left: 10px;
 }
 
-/* CATEGORII */
+.subtitle { color: #94a3b8; margin-top: 10px; font-size: 1.1rem; }
+
 .category-nav {
   margin-top: 30px;
   display: flex;
@@ -189,8 +234,45 @@ body {
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
 }
 
+/* Slider Preț sub Categorii */
+.price-filter-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+  width: 100%;
+}
+
+.price-filter-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 300px;
+}
+
+.price-filter-container span { color: var(--accent); font-weight: bold; }
+
+.price-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #1e293b;
+  border-radius: 5px;
+  outline: none;
+}
+
+.price-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--accent);
+}
+
 /* ==========================================
-   PRODUSE
+   GRID ȘI CARDURI PRODUSE
    ========================================== */
 .product-grid {
   display: grid;
@@ -209,10 +291,7 @@ body {
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.product-card:hover {
-  transform: translateY(-10px);
-  border-color: var(--accent);
-}
+.product-card:hover { transform: translateY(-10px); border-color: var(--accent); }
 
 .img-container {
   background: #fff;
@@ -223,11 +302,7 @@ body {
   padding: 20px;
 }
 
-.img-container img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
+.img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .product-info { padding: 24px; }
 .product-info h3 { margin: 0 0 10px; font-size: 1.3rem; }
@@ -245,48 +320,109 @@ body {
   transition: 0.2s;
 }
 
-.buy-btn:hover { filter: brightness(1.1); }
+.buy-btn:hover { filter: brightness(1.1); transform: scale(1.05); }
+
+.badge {
+  position: absolute;
+  background: var(--accent);
+  color: var(--bg-dark);
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 0 0 8px 0;
+  z-index: 10;
+}
 
 /* ==========================================
-   MODALE & ADMIN
+   MODALE ȘI ADMIN
    ========================================== */
 .auth-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 1000; backdrop-filter: blur(5px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center; /* Centrează orizontal */
+    align-items: center;     /* Centrează vertical */
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    margin: 0;
+    padding: 0;
 }
 
 .auth-modal {
     position: relative;
-    background: #1e293b;
-    border-radius: 20px;
-    border: 1px solid #38bdf8;
-    padding: 40px; /* Am mărit padding-ul ca să nu stea X-ul lipit de text */
-    min-width: 400px;
-    z-index: 1000;
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+    background: #111827; 
+    border: 2px solid #38bdf8;
+    border-radius: 24px;
+   scrollbar-gutter: stable both-edges;
+    /* 1. RESETARE ȘI CENTRARE */
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Centrează orizontal TOT conținutul */
+    justify-content: center; /* Centrează vertical */
+    text-align: center;
+    
+    /* 2. DIMENSIUNI PROPORȚIONALE */
+    width: 92%;
+    max-width: 440px; 
+    margin: 0 auto;
+    
+    /* 3. PADDING SIMETRIC (VALOARE UNICĂ) */
+    /* Folosim o singură valoare pentru toate părțile ca să fie imposibil să fie asimetric */
+    padding: clamp(35px, 6vh, 50px) !important; 
+    
+    box-sizing: border-box;
+    
+    
+    /* 4. SCALARE */
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+
+.auth-modal form {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+
+.auth-modal input {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    margin: 0 auto; /* Le centrează în interiorul form-ului */
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 12px;
+    padding: 14px;
+    color: white;
 }
 
 .close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 255, 255, 0.1); /* Fundal subtil ca să fie vizibil */
-    border: none;
-    color: #38bdf8; /* Aceeași culoare cu restul temei */
-    font-size: 1.8rem;
-    cursor: pointer;
-    line-height: 1;
-    padding: 5px 10px;
-    border-radius: 50%; /* Îl facem rotund */
-    transition: all 0.2s ease;
-    z-index: 1010; /* Mai mare decât orice din interiorul modalului */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  top: 15px; right: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none; color: var(--accent);
+  font-size: 1.8rem; cursor: pointer;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1010;
+  transition: 0.3s;
 }
+
+.close-btn:hover { background: var(--danger); color: white; transform: rotate(90deg); }
 
 .admin-badge {
   background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
@@ -301,8 +437,8 @@ body {
 
 .admin-edit-btn {
   background: transparent;
-  border: 1px solid #eab308;
-  color: #eab308;
+  border: 1px solid var(--warning);
+  color: var(--warning);
   padding: 8px 15px;
   border-radius: 8px;
   font-weight: bold;
@@ -310,13 +446,10 @@ body {
   transition: 0.3s;
 }
 
-.admin-edit-btn:hover {
-  background: #eab308;
-  color: #0f172a;
-}
+.admin-edit-btn:hover { background: var(--warning); color: var(--bg-dark); }
 
 .add-product-btn {
-  background: #10b981;
+  background: var(--success);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -324,10 +457,78 @@ body {
   font-weight: bold;
   cursor: pointer;
   margin-left: 20px;
+  transition: 0.3s;
 }
 
-.close-btn:hover {
-    background: #ef4444; /* Devine roșu la hover (sugestie de închidere) */
-    color: white;
-    transform: rotate(90deg); /* Un efect mic de rotație */
+.add-product-btn:hover { background: #059669; transform: translateY(-2px); }
+
+/* ==========================================
+   MEDIA QUERIES (RESPONSIVE)
+   ========================================== */
+@media (max-width: 1100px) {
+  .search-container { max-width: 250px; }
+  .cart-label { display: none; }
+}
+
+@media (max-width: 768px) {
+
+  .search-container {
+        order: 3; /* Îl pune sub butoane */
+        width: 85%; /* Nu 100%, ca să aibă margini aerisite */
+        max-width: 300px; /* Îl limităm să nu fie prea lung pe ecrane late de mobil */
+        margin: 15px auto 0; /* Îl centrează orizontal */
+    }
+
+    .search-input {
+        padding: 8px 12px 8px 35px;
+        font-size: 0.85rem;
+    }
+
+ .top-bar {
+        position: relative; /* Nu mai stă peste logo pe mobil */
+        padding: 15px;
+        justify-content: center; /* Centrează totul pe mobil */
+        gap: 10px;
+        background: var(--bg-dark); /* Fundal solid ca să fie vizibil */
+    }
+  .auth-side, .cart-side, .search-container {
+    width: 100%;
+    max-width: none;
+    justify-content: center;
+    margin: 0;
+  }
+
+
+
+    .login-btn, .cart-icon-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        gap: 6px;
+    }
+
+    /* Logo-ul: Îl micșorăm să nu ocupe tot ecranul */
+    .main-header {
+        padding: 20px 10px 40px;
+    }
+
+    .tech-logo-icon {
+        font-size: 2.5rem;
+    }
+  .main-title { font-size: 2.5rem; flex-direction: column; }
+  .product-grid { grid-template-columns: 1fr; padding: 20px; }
+  .price-filter-container { width: 90%; }
+
+}
+
+@media (max-width: 480px) {
+  .auth-modal { padding: 40px 20px 20px; }
+  .main-title { font-size: 2rem; }
+  .login-btn span, .cart-label {
+        display: none;
+    }
+    
+    .login-btn, .cart-icon-btn {
+        padding: 10px;
+        border-radius: 50%; /* Le facem rotunde */
+    }
 }
