@@ -1,41 +1,48 @@
 # 🚀 TechVault - PC Components Store
 
-Aplicație Full-Stack modernă (Spring Boot + React) pentru managementul componentelor PC.
+Aplicație Full-Stack modernă (Spring Boot + React) pentru managementul componentelor PC, cu un design securizat și optimizat pentru orice dispozitiv.
 
 ## 🛠 1. Ce face aplicația?
-* **Autentificare securizată:** Logare/Înregistrare cu BCrypt.
-* **Catalog:** Vizualizare produse cu stoc și puncte de fidelitate.
-* **UI/UX:** Design simetric, optimizat pentru mobil (Samsung S8+) și desktop.
+* **Autentificare securizată:** Sistem de Logare și Înregistrare cu parole criptate folosind BCrypt.
+* **Catalog Hardware:** Vizualizarea produselor (Plăci video, Procesoare, etc.) cu detalii despre stoc, preț și categorii.
+* **Sistem de Fidelitate:** Utilizatorii logați pot acumula și vizualiza puncte de loialitate (`points`).
+* **Design Responsive:** Interfață simetrică, optimizată special pentru ecrane mobile (Samsung S8+, etc.) și desktop.
 
-## 💻 2. Ghid de Instalare (Device Nou)
+## 💻 2. Ghid de Instalare (Pe un dispozitiv nou)
 
-### 🗄️ Pasul 1: Baza de Date
-Rulează scriptul `TechVaultSetup.sql` în SSMS. Acesta creează baza de date `TechVaultDB`, utilizatorul `techuser` (parola `User123!`) și tabelele necesare.
+### 🗄️ Pasul 1: Baza de Date (SQL Server)
+Înainte de a porni aplicația, trebuie pregătit mediul de date. Rulează scriptul `TechVaultSetup.sql` în **SQL Server Management Studio (SSMS)**. Acesta va executa automat:
+1. Crearea bazei de date `TechVaultDB`.
+2. Crearea login-ului și utilizatorului `techuser` cu parola `User123!`.
+3. Generarea și popularea tabelelor `users` și `products` cu date de test.
 
 ### ⚠️ Pasul 2: Depanare Port 1433 (TCP/IP)
-Dacă conexiunea este refuzată:
+Dacă serverul backend nu se poate conecta la baza de date (eroare *Connection Refused*):
 1. Deschide **SQL Server Configuration Manager**.
 2. Mergi la **SQL Server Network Configuration** > **Protocols for MSSQLSERVER**.
-3. Activează (**Enable**) **TCP/IP**.
-4. La **TCP/IP Properties** > **IP Addresses** > **IPAll**:
-   - Șterge *TCP Dynamic Ports*.
+3. Dă click dreapta pe **TCP/IP** și alege **Enable**.
+4. Dublu-click pe **TCP/IP**, mergi la tab-ul **IP Addresses**, scroll până jos la **IPAll**:
+   - Șterge orice valoare de la *TCP Dynamic Ports*.
    - Setează *TCP Port* la **1433**.
-5. **Restart** la serviciul *SQL Server (MSSQLSERVER)* din lista de Services.
+5. Mergi la **SQL Server Services** și dă **Restart** serviciului *SQL Server (MSSQLSERVER)*.
 
-### ⚙️ Pasul 3: Configurația Predefinită (application.properties)
-Proiectul vine configurat "out-of-the-box". Nu este necesară nicio modificare în cod, dar asigurați-vă că parametrii de mai jos (deja existenți în src/main/resources/application.properties) corespund cu baza de date creată anterior:
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=TechVaultDB;encrypt=true;trustServerCertificate=true;
-spring.datasource.username=techuser
-spring.datasource.password=User123!
-
+### ⚙️ Pasul 3: Configurația Predefinită (`application.properties`)
+Proiectul este configurat să funcționeze "out-of-the-box". Parametrii de conexiune sunt deja hardcodați în `src/main/resources/application.properties`:
+* **URL**: `jdbc:sqlserver://localhost:1433;databaseName=TechVaultDB`
+* **User**: `techuser`
+* **Parolă**: `User123!`
+* **Dialect**: `SQLServerDialect`
 
 ### 🚀 Pasul 4: Pornirea Proiectului
 
-**Backend:**
-Click dreapta pe server\src\main\java\web\proiect\App.java Run Java.Asteptam mesaj de confirmare a pornirii serverului.
+**Backend (Java/Spring Boot):**
+1. Navighează în IDE (IntelliJ/VS Code) la: `server\src\main\java\web\proiect\App.java`.
+2. Click dreapta pe fișier -> **Run Java**.
+3. Serverul este pornit când apare mesajul: `Started App in X seconds`.
 
-
-**Frontend**
+**Frontend (React/Vite):**
+Deschide un terminal în folderul proiectului:
 ```bash
 cd client
+npm install  # Rulează această comandă doar la prima instalare
 npm run dev
