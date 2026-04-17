@@ -25,20 +25,8 @@ Urmează pașii de mai jos pentru a configura mediul de dezvoltare.
 ### 🗄️ Pasul 1: Configurarea Bazei de Date (SQL Server)
 
 1.  Deschide **SQL Server Management Studio (SSMS)** și conectează-te la serverul local.
-2.  **Creează baza de date:**
-    ```sql
-    CREATE DATABASE vault_db;
-    GO
-    ```
-3.  **Creează un utilizator dedicat** (recomandat pentru securitate):
-    ```sql
-    CREATE LOGIN techuser WITH PASSWORD = 'User123!';
-    USE vault_db;
-    CREATE USER techuser FOR LOGIN techuser;
-    ALTER ROLE db_owner ADD MEMBER techuser;
-    GO
-    ```
-
+2.  Deschide si rulează TechVaultDB.sql
+    
 ### 🔗 Pasul 2: Configurarea Conexiunii
 
 În folderul Web_proiect\server\src\main\resources\application.properties, creează un fișier `.env` și adaugă link-ul de conectare:
@@ -47,4 +35,3 @@ Urmează pașii de mai jos pentru a configura mediul de dezvoltare.
 DB_CONNECTION_STRING="Server=localhost;Database=vault_db;User Id=vault_user;Password=ParolaTaPuternica123!;Encrypt=true;TrustServerCertificate=true;"
 PORT=5000
 
-<img width="1021" height="484" alt="image" src="https://github.com/user-attachments/assets/070f0584-73b7-4af5-a470-273ed8920a18" />
