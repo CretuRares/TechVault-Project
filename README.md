@@ -18,7 +18,7 @@ Aplicația folosește un sistem de control al accesului bazat pe roluri, definit
 |:---|:---:|:---:|
 | Vizualizare produse | ✅ | ✅ |
 | Căutare componente | ✅ | ✅ |
-| Acumulare puncte fidelitate | ✅ | ✅ |
+| Acumulare puncte fidelitate | ✅ | ❌ |
 | Acces panou de control | ❌ | ✅ |
 | Adăugare/Editare produse | ❌ | ✅ |
 | Ștergere produse | ❌ | ✅ |
