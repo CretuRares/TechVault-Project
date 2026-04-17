@@ -1,37 +1,33 @@
-# 🚀 Vault Tech App
+# 🚀 TechVault - PC Components Store
 
-Acest proiect este o aplicație web modernă pentru gestionarea componentelor PC, oferind o interfață optimizată pentru orice dispozitiv.
+Aplicație Full-Stack modernă (Spring Boot + React) pentru managementul componentelor PC.
 
 ## 🛠 1. Ce face aplicația?
+* **Autentificare securizată:** Logare/Înregistrare cu BCrypt.
+* **Catalog:** Vizualizare produse cu stoc și puncte de fidelitate.
+* **UI/UX:** Design simetric, optimizat pentru mobil (Samsung S8+) și desktop.
 
-Aplicația permite utilizatorilor să:
-* ** Creare cont și logare într-un "Vault" personalizat.
-* ** Identificarea rapidă a produselor/elementelor prin bara de căutare din header.
-* ** Design adaptat pentru PC, Tabletă și Mobil (Samsung S8+, etc.).
-* ** Gestionarea informațiilor stocate într-o bază de date SQL Server.
+## 💻 2. Ghid de Instalare (Device Nou)
 
----
+### 🗄️ Pasul 1: Baza de Date
+Rulează scriptul `TechVaultSetup.sql` în SSMS. Acesta creează baza de date `TechVaultDB`, utilizatorul `techuser` (parola `User123!`) și tabelele necesare.
 
-## 💻 2. Ghid de Instalare (Setup pe un device nou)
+### ⚠️ Pasul 2: Depanare Port 1433 (TCP/IP)
+Dacă conexiunea este refuzată:
+1. Deschide **SQL Server Configuration Manager**.
+2. Mergi la **SQL Server Network Configuration** > **Protocols for MSSQLSERVER**.
+3. Activează (**Enable**) **TCP/IP**.
+4. La **TCP/IP Properties** > **IP Addresses** > **IPAll**:
+   - Șterge *TCP Dynamic Ports*.
+   - Setează *TCP Port* la **1433**.
+5. **Restart** la serviciul *SQL Server (MSSQLSERVER)* din lista de Services.
 
-Urmează pașii de mai jos pentru a configura mediul de dezvoltare.
+### ⚙️ Pasul 3: Configurația Predefinită (application.properties)
+Proiectul vine configurat "out-of-the-box". Nu este necesară nicio modificare în cod, dar asigurați-vă că parametrii de mai jos (deja existenți în src/main/resources/application.properties) corespund cu baza de date creată anterior:
 
-### 📋 Precondiții
-* [Node.js](https://nodejs.org/) (versiunea LTS recomandată)
-* [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 
----
+### 🚀 Pasul 4: Pornirea Proiectului
 
-### 🗄️ Pasul 1: Configurarea Bazei de Date (SQL Server)
-
-1.  Deschide **SQL Server Management Studio (SSMS)** și conectează-te la serverul local.
-2.  Deschide si rulează TechVaultDB.sql
-    
-### 🔗 Pasul 2: Configurarea Conexiunii
-
-În folderul Web_proiect\server\src\main\resources\application.properties, creează un fișier `.env` și adaugă link-ul de conectare:
-
-```env
-DB_CONNECTION_STRING="Server=localhost;Database=vault_db;User Id=vault_user;Password=ParolaTaPuternica123!;Encrypt=true;TrustServerCertificate=true;"
-PORT=5000
-
+**Backend:**
+```bash
+mvn spring-boot:run
