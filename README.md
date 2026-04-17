@@ -36,7 +36,7 @@ Aplicația folosește un sistem de control al accesului bazat pe roluri, definit
 
 ---
 ## 3.Contribuția proprie
-Serverul bazat pe Spring Boot și ferestrele pentru Logare si Autentificare.
+Serverul bazat pe Spring Boot și ferestrele pentru Logare/Autentificare.
 
 
 ---
