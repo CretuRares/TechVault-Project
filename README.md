@@ -1,8 +1,8 @@
-# 🚀 TechVault - PC Components Store
+#  TechVault - PC Components Store
 
 Aplicație Full-Stack modernă (Spring Boot + React) pentru managementul componentelor PC, cu un design securizat și optimizat pentru orice dispozitiv.
 
-## 🛠 1. Ce face aplicația?
+##  1. Ce face aplicația?
 * **Autentificare:** Sistem de Logare și Înregistrare cu parole.
 * **Catalog Hardware:** Vizualizarea produselor (Plăci video, Procesoare, etc.) cu detalii despre stoc, preț și categorii.
 * **Sistem de Fidelitate:** Utilizatorii logați pot acumula și vizualiza puncte de loialitate (`points`).
@@ -10,7 +10,7 @@ Aplicație Full-Stack modernă (Spring Boot + React) pentru managementul compone
 
 ---
 
-## 👥 2. Roluri și Permisiuni
+##  2. Roluri și Permisiuni
 
 Aplicația folosește un sistem de control al accesului bazat pe roluri, definit în coloana `role` din tabela `users`.
 
@@ -23,7 +23,7 @@ Aplicația folosește un sistem de control al accesului bazat pe roluri, definit
 | Adăugare/Editare produse | ❌ | ✅ |
 | Ștergere produse | ❌ | ✅ |
 
-### 🛠️ Capabilități Specifice:
+###  Capabilități Specifice:
 
 #### **Utilizator (Role: `USER`)**
 * **Experiență Personalizată:** Acces la un profil propriu unde poate vedea punctele de fidelitate acumulate.
@@ -35,15 +35,20 @@ Aplicația folosește un sistem de control al accesului bazat pe roluri, definit
 * **Interfață Extinsă:** În header apare insigna specială de **ADMIN** care deblochează butoanele de editare.
 
 ---
-## 💻 3. Ghid de Instalare (Pe un dispozitiv nou)
+## 3.Contribuția proprie
+Serverul bazat pe Spring Boot și ferestrele pentru Logare si Autentificare.
 
-### 🗄️ Pasul 1: Baza de Date (SQL Server)
+
+---
+##  4. Ghid de Instalare (Pe un dispozitiv nou)
+
+###  Pasul 1: Baza de Date (SQL Server)
 Înainte de a porni aplicația, trebuie pregătit mediul de date. Rulează scriptul `TechVaultSetup.sql` în **SQL Server Management Studio (SSMS)**. Acesta va executa automat:
 1. Crearea bazei de date `TechVaultDB`.
 2. Crearea login-ului și utilizatorului `techuser` cu parola `User123!`.
 3. Generarea și popularea tabelelor `users` și `products` cu date de test.
 
-### ⚠️ Pasul 2: Depanare Port 1433 (TCP/IP)
+###  Pasul 2: Depanare Port 1433 (TCP/IP)
 Dacă serverul backend nu se poate conecta la baza de date (eroare *Connection Refused*):
 1. Deschide **SQL Server Configuration Manager**.
 2. Mergi la **SQL Server Network Configuration** > **Protocols for MSSQLSERVER**.
@@ -53,13 +58,13 @@ Dacă serverul backend nu se poate conecta la baza de date (eroare *Connection R
    - Setează *TCP Port* la **1433**.
 5. Mergi la **SQL Server Services** și dă **Restart** serviciului *SQL Server (MSSQLSERVER)*.
 
-### ⚙️ Pasul 3: Configurația Predefinită (`application.properties`)
+### Pasul 3: Configurația Predefinită (`application.properties`)
 Proiectul este configurat să funcționeze "out-of-the-box". Parametrii de conexiune sunt deja hardcodați în `src/main/resources/application.properties`:
 * **URL**: `jdbc:sqlserver://localhost:1433;databaseName=TechVaultDB`
 * **User**: `techuser`
 * **Parolă**: `User123!`
 
-### 🚀 Pasul 4: Pornirea Proiectului
+### Pasul 4: Pornirea Proiectului
 
 **Backend (Java/Spring Boot):**
 1. Navighează în VS Code la: `server\src\main\java\web\proiect\App.java`.
