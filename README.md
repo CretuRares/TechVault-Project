@@ -43,7 +43,7 @@ Serverul bazat pe Spring Boot și ferestrele pentru Logare/Autentificare.
 ##  4. Ghid de Instalare (Pe un dispozitiv nou)
 
 ###  Pasul 1: Baza de Date (SQL Server)
-Înainte de a porni aplicația, trebuie pregătit mediul de date. Rulează scriptul `TechVaultSetup.sql` în **SQL Server Management Studio (SSMS)**. Acesta va executa automat:
+Înainte de a porni aplicația, trebuie pregătit mediul de date. Rulează scriptul `TechVaultDB.sql` în **SQL Server Management Studio (SSMS)**. Acesta va executa automat:
 1. Crearea bazei de date `TechVaultDB`.
 2. Crearea login-ului și utilizatorului `techuser` cu parola `User123!`.
 3. Generarea și popularea tabelelor `users` și `products` cu date de test.
