@@ -24,10 +24,18 @@ Dacă conexiunea este refuzată:
 
 ### ⚙️ Pasul 3: Configurația Predefinită (application.properties)
 Proiectul vine configurat "out-of-the-box". Nu este necesară nicio modificare în cod, dar asigurați-vă că parametrii de mai jos (deja existenți în src/main/resources/application.properties) corespund cu baza de date creată anterior:
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=TechVaultDB;encrypt=true;trustServerCertificate=true;
+spring.datasource.username=techuser
+spring.datasource.password=User123!
 
 
 ### 🚀 Pasul 4: Pornirea Proiectului
 
 **Backend:**
+Click dreapta pe server\src\main\java\web\proiect\App.java Run Java.Asteptam mesaj de confirmare a pornirii serverului.
+
+
+**Frontend**
 ```bash
-mvn spring-boot:run
+cd client
+npm run dev
