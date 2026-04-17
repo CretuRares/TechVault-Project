@@ -24,7 +24,6 @@ Dacă conexiunea este refuzată:
 
 ### ⚙️ Pasul 3: Configurația Predefinită (application.properties)
 Proiectul vine configurat "out-of-the-box". Nu este necesară nicio modificare în cod, dar asigurați-vă că parametrii de mai jos (deja existenți în src/main/resources/application.properties) corespund cu baza de date creată anterior:
-```bash
 spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=TechVaultDB;encrypt=true;trustServerCertificate=true;
 spring.datasource.username=techuser
 spring.datasource.password=User123!
