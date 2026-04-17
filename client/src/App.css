@@ -48,6 +48,7 @@ body {
     gap: 15px;
 }
 
+
 .auth-side, .cart-side {
     display: flex;
     align-items: center;

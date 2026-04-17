@@ -1,6 +1,0 @@
-"TechVault" – Un magazin de componente PC custom sau gadget-uri geek.
-
-1.Backend (Java + Spring Boot)
-2.Frontend(Java cu React)
-
-
