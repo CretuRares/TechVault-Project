@@ -1,4 +1,4 @@
-﻿-- 1. Creare Bază de Date TechVaultDB
+-- 1. Creare Bază de Date TechVaultDB
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'TechVaultDB')
 BEGIN
     CREATE DATABASE TechVaultDB;
@@ -47,6 +47,48 @@ BEGIN
         category NVARCHAR(50),
         image_url NVARCHAR(255),
         stock INT DEFAULT 0        
+    );
+END
+GO
+
+-- 5. Tabelul pentru Carduri
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[cards]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE cards (
+        id BIGINT PRIMARY KEY IDENTITY(1,1),
+        card_number NVARCHAR(19) NOT NULL,
+        expiry_date NVARCHAR(5) NOT NULL,
+        cvv NVARCHAR(4) NOT NULL,
+        user_id BIGINT UNIQUE NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+END
+GO
+
+-- 6. Tabelul pentru Comenzi
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[orders]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE orders (
+        id BIGINT PRIMARY KEY IDENTITY(1,1),
+        user_id BIGINT NOT NULL,
+        total_amount DECIMAL(10, 2) NOT NULL,
+        order_date DATETIME2 NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+END
+GO
+
+-- 7. Tabelul pentru Produsele din Comandă (Order Items)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[order_items]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE order_items (
+        id BIGINT PRIMARY KEY IDENTITY(1,1),
+        order_id BIGINT NOT NULL,
+        product_id BIGINT NOT NULL,
+        quantity INT NOT NULL,
+        price DECIMAL(10, 2) NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES orders(id),
+        FOREIGN KEY (product_id) REFERENCES products(id)
     );
 END
 GO

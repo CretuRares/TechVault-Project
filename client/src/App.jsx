@@ -6,6 +6,8 @@ import Auth from './Auth';
 import EditProductModal from './EditProductModal';
 import AddProductModal from './AddProductModal'; 
 import Cart from './Cart';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import UserProfile from './UserProfile';
 
 
 
@@ -22,6 +24,8 @@ function App() {
   const [productToEdit, setProductToEdit] = useState(null); 
   const [showEditModal, setShowEditModal] = useState(false); 
   const [maxPrice, setMaxPrice] = useState(20000); 
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const categories = ['Toate', 'Procesoare', 'Placi Video', 'Carcase', 'Memorii RAM', 'Stocare'];
 
@@ -119,6 +123,7 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
+    navigate('/');
   };
 
   // Verificăm dacă userul este Admin (pentru scurtătură în cod)
@@ -208,7 +213,9 @@ const handleCheckout = async () => {
         <div className="auth-side">
           {user ? (
             <div className="user-info-box">
-              <span className="user-name">Salut, <strong>{user.username}</strong></span>
+              <span className="user-name" onClick={() => navigate('/profile')} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
+                Salut, <strong>{user.username}</strong>
+              </span>
               {!isAdmin && <span className="user-points">⭐ {user.points || 0} pct</span>}
               {isAdmin && <span className="admin-badge">ADMIN</span>}
               <button className="logout-btn" onClick={handleLogout}>Ieșire</button>
@@ -218,17 +225,19 @@ const handleCheckout = async () => {
           )}
         </div>
 
-        {/* SEARCH BAR - RĂMÂNE SUS ÎNTRE ELE */}
-        <div className="search-container">
-          <input 
-            type="text" 
-            placeholder="Caută componente..." 
-            className="search-input"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <span className="search-icon">🔍</span>
-        </div>
+        {/* SEARCH BAR - DOAR PE HOME */}
+        {location.pathname === '/' && (
+          <div className="search-container">
+            <input 
+              type="text" 
+              placeholder="Caută componente..." 
+              className="search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <span className="search-icon">🔍</span>
+          </div>
+        )}
 
         {/* PARTEA DREAPTĂ: COȘUL */}
         <div className="cart-side">
@@ -249,63 +258,73 @@ const handleCheckout = async () => {
       </div>
       <p className="subtitle">High-End Hardware for Enthusiasts</p>
 
-      <nav className="category-nav">
-        {categories.map(cat => (
-          <button 
-            key={cat} 
-            className={`nav-btn ${activeCategory === cat ? 'active' : ''}`} 
-            onClick={() => handleFilter(cat)}
-          >
-            {cat}
-          </button>
-        ))}
-        
-        {isAdmin && (
-          <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
-            + Produs Nou
-          </button>
-        )}
-      </nav>
+      {location.pathname === '/' && (
+        <>
+          <nav className="category-nav">
+            {categories.map(cat => (
+              <button 
+                key={cat} 
+                className={`nav-btn ${activeCategory === cat ? 'active' : ''}`} 
+                onClick={() => handleFilter(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+            
+            {isAdmin && (
+              <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
+                + Produs Nou
+              </button>
+            )}
+          </nav>
 
-      {/* FILTRU PREȚ - SUB CATEGORII, ALINIAT PE CENTRU */}
-      <div className="price-filter-center">
-        <div className="price-filter-container">
-          <label>Preț maxim: <span>{maxPrice} RON</span></label>
-          <input 
-            type="range" 
-            min="0" 
-            max="20000" 
-            step="100"
-            value={maxPrice} 
-            onChange={(e) => setMaxPrice(Number(e.target.value))}
-            className="price-slider"
-          />
-        </div>
-      </div>
-    </header>
-
-    <main className="product-grid">
-      {filteredProducts.map(p => (
-        <div key={p.id} className="product-card">
-          <div className="badge">{p.category}</div>
-          <div className="img-container">
-            <img src={p.imageUrl || 'https://via.placeholder.com/150'} alt={p.name} />
-          </div>
-          <div className="product-info">
-            <h3>{p.name}</h3>
-            <p className="description">{p.description}</p>
-            <div className="price-row">
-              <span className="price">{p.price} <small>RON</small></span>
-              {isAdmin ? (
-                <button className="admin-edit-btn" onClick={() => openEditModal(p)}>⚙️ Modifică</button>
-              ) : (
-                <button className="buy-btn" onClick={() => addToCart(p)}>🛒</button>
-              )}
+          {/* FILTRU PREȚ - SUB CATEGORII, ALINIAT PE CENTRU */}
+          <div className="price-filter-center">
+            <div className="price-filter-container">
+              <label>Preț maxim: <span>{maxPrice} RON</span></label>
+              <input 
+                type="range" 
+                min="0" 
+                max="20000" 
+                step="100"
+                value={maxPrice} 
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="price-slider"
+              />
             </div>
           </div>
-        </div>
-      ))}
-    </main>
+        </>
+      )}
+    </header>
+
+    <Routes>
+      <Route path="/" element={
+        <main className="product-grid">
+          {filteredProducts.map(p => (
+            <div key={p.id} className="product-card">
+              <div className="badge">{p.category}</div>
+              <div className="img-container">
+                <img src={p.imageUrl || 'https://via.placeholder.com/150'} alt={p.name} />
+              </div>
+              <div className="product-info">
+                <h3>{p.name}</h3>
+                <p className="description">{p.description}</p>
+                <div className="price-row">
+                  <span className="price">{p.price} <small>RON</small></span>
+                  {isAdmin ? (
+                    <button className="admin-edit-btn" onClick={() => openEditModal(p)}>⚙️ Modifică</button>
+                  ) : (
+                    <button className="buy-btn" onClick={() => addToCart(p)}>🛒</button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </main>
+      } />
+      
+      <Route path="/profile" element={<UserProfile user={user} />} />
+    </Routes>
   </div>
 );
 }
