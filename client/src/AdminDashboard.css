@@ -1,0 +1,186 @@
+.admin-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+  color: white;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 15px;
+}
+
+.admin-header h2 {
+  font-size: 2rem;
+  margin: 0;
+  color: #00d2ff;
+}
+
+.admin-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.users-list-section {
+  flex: 2;
+  background: rgba(25, 25, 35, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.users-list-section h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #00d2ff;
+}
+
+.users-table-wrapper {
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.users-table th {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px;
+  color: #aaa;
+  font-weight: normal;
+}
+
+.users-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+.users-table tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.users-table tr.active-row td {
+  background: rgba(0, 210, 255, 0.1);
+}
+
+.role-select {
+  padding: 6px 10px;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  outline: none;
+}
+
+.role-select.role-admin {
+  border-color: #ff5555;
+  color: #ff5555;
+}
+
+.role-select.role-user {
+  border-color: #00d2ff;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.view-btn {
+  background: rgba(0, 210, 255, 0.1);
+  color: #00d2ff;
+  border: 1px solid #00d2ff;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn:hover {
+  background: #00d2ff;
+  color: black;
+}
+
+.delete-user-btn {
+  background: rgba(255, 85, 85, 0.1);
+  color: #ff5555;
+  border: 1px solid #ff5555;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-user-btn:hover {
+  background: #ff5555;
+  color: white;
+}
+
+/* User Details Panel */
+.user-details-panel {
+  flex: 1;
+  background: rgba(20, 20, 28, 0.95);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  border-radius: 15px;
+  padding: 25px;
+  position: sticky;
+  top: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.panel-header h3 {
+  margin: 0;
+}
+
+.close-panel-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.close-panel-btn:hover {
+  color: white;
+}
+
+.detail-section {
+  margin-bottom: 25px;
+}
+
+.detail-section h4 {
+  color: #aaa;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.no-data {
+  color: #666;
+  font-style: italic;
+}
+
+/* Refolosire stiluri card si comenzi (din UserProfile.css dar izolate aici) */
+.admin-view-card {
+  transform: scale(0.9);
+  transform-origin: top left;
+  margin-bottom: 0;
+}

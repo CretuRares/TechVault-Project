@@ -135,14 +135,46 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+  background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-form::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/cubes.png');
+  opacity: 0.1;
+  pointer-events: none;
 }
 
 .card-form input {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 14px;
   color: white;
   border-radius: 8px;
+  font-family: monospace;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.card-form input:focus {
+  outline: none;
+  border-color: #00d2ff;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+}
+
+.card-form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .card-form-row {
@@ -157,25 +189,43 @@
 .card-form-actions {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .save-card-btn {
   flex: 1;
-  background: #00d2ff;
+  background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
   border: none;
-  color: black;
+  color: white;
   font-weight: bold;
   border-radius: 8px;
+  padding: 12px;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.save-card-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
 }
 
 .cancel-card-btn {
   flex: 1;
   background: rgba(255, 255, 255, 0.1);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   border-radius: 8px;
+  padding: 12px;
   cursor: pointer;
+  transition: background 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cancel-card-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Orders List */

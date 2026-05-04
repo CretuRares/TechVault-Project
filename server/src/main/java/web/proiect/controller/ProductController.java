@@ -77,7 +77,7 @@ public class ProductController {
 
    @PostMapping("/checkout/{userId}")
     @org.springframework.transaction.annotation.Transactional // Asigură-te că ai importul corect
-    public ResponseEntity<?> checkout(@PathVariable Long userId, @RequestBody List<CartItemDTO> items) {
+    public ResponseEntity<?> checkout(@PathVariable Long userId, @RequestBody CheckoutRequestDTO request) {
         
         // 1. Găsim utilizatorul folosind instanța injectată (cu literă mică!)
         User user = userRepository.findById(userId)
@@ -95,7 +95,7 @@ public class ProductController {
         Order order = new Order(user, BigDecimal.ZERO, LocalDateTime.now());
         List<OrderItem> orderItems = new ArrayList<>();
 
-        for (CartItemDTO item : items) {
+        for (CartItemDTO item : request.getItems()) {
             Product product = productRepository.findById(item.getProductId())
                     .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
             
@@ -116,18 +116,35 @@ public class ProductController {
             orderItems.add(orderItem);
         }
 
-        order.setTotalAmount(totalOrder);
+        BigDecimal finalTotal = totalOrder;
+        int currentPoints = user.getPoints() != null ? user.getPoints() : 0;
+        
+        if (request.isUsePoints() && currentPoints > 0) {
+            BigDecimal discount = BigDecimal.valueOf(currentPoints).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            
+            if (discount.compareTo(finalTotal) >= 0) {
+                // Points cover the entire order
+                BigDecimal pointsUsedDec = finalTotal.multiply(BigDecimal.valueOf(100));
+                currentPoints -= pointsUsedDec.intValue();
+                finalTotal = BigDecimal.ZERO;
+            } else {
+                // Points cover part of the order
+                finalTotal = finalTotal.subtract(discount);
+                currentPoints = 0;
+            }
+        }
+
+        order.setTotalAmount(finalTotal);
         order.setItems(orderItems);
         orderRepository.save(order);
 
-        // 4. Calculăm punctele și salvăm
-       // Varianta corectă: folosim .divide() și BigDecimal.valueOf(10)
-        int pointsGained = totalOrder.divide(BigDecimal.valueOf(10), RoundingMode.HALF_UP).intValue();
-        user.setPoints((user.getPoints() != null ? user.getPoints() : 0) + pointsGained);
+        // 4. Calculăm punctele și salvăm (doar din ce a mai rămas de plată)
+        int pointsGained = finalTotal.divide(BigDecimal.valueOf(10), RoundingMode.HALF_UP).intValue();
+        user.setPoints(currentPoints + pointsGained);
         
         userRepository.save(user);
 
-        return ResponseEntity.ok(user); 
+        return ResponseEntity.ok(new CheckoutResponseDTO(user, pointsGained)); 
     }
 
 }

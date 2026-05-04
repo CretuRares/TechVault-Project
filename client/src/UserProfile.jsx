@@ -33,6 +33,43 @@ function UserProfile({ user }) {
 
   const handleSaveCard = async (e) => {
     e.preventDefault();
+
+    // Validare Număr Card
+    if (cardForm.cardNumber.length !== 16) {
+      alert("Numărul cardului trebuie să aibă exact 16 cifre.");
+      return;
+    }
+
+    // Validare Dată Expirare
+    if (cardForm.expiryDate.length !== 5) {
+      alert("Data de expirare trebuie să fie completă (MM/YY).");
+      return;
+    }
+
+    const [monthStr, yearStr] = cardForm.expiryDate.split('/');
+    const month = parseInt(monthStr, 10);
+    const year = parseInt(yearStr, 10);
+
+    if (month < 1 || month > 12) {
+      alert("Luna de expirare trebuie să fie între 01 și 12.");
+      return;
+    }
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear() % 100; // Ultimele două cifre ale anului
+    const currentMonth = currentDate.getMonth() + 1; // getMonth() întoarce 0-11
+
+    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      alert("Cardul este expirat!");
+      return;
+    }
+
+    // Validare CVV
+    if (cardForm.cvv.length !== 3) {
+      alert("Codul CVV trebuie să aibă exact 3 cifre.");
+      return;
+    }
+
     try {
       const res = await axios.post(`http://localhost:8080/api/profile/card/${user.id}`, cardForm);
       setCard(res.data);
@@ -54,6 +91,14 @@ function UserProfile({ user }) {
         alert("Eroare la ștergerea cardului.");
       }
     }
+  };
+
+  const handleExpiryChange = (e) => {
+    let val = e.target.value.replace(/\D/g, ''); // Elimină orice nu este cifră
+    if (val.length > 2) {
+      val = val.slice(0, 2) + '/' + val.slice(2, 4);
+    }
+    setCardForm({...cardForm, expiryDate: val});
   };
 
   if (!user) return null;
@@ -93,7 +138,10 @@ function UserProfile({ user }) {
                     maxLength="16"
                     required
                     value={cardForm.cardNumber}
-                    onChange={(e) => setCardForm({...cardForm, cardNumber: e.target.value})}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      setCardForm({...cardForm, cardNumber: val});
+                    }}
                   />
                   <div className="card-form-row">
                     <input 
@@ -102,15 +150,18 @@ function UserProfile({ user }) {
                       maxLength="5"
                       required
                       value={cardForm.expiryDate}
-                      onChange={(e) => setCardForm({...cardForm, expiryDate: e.target.value})}
+                      onChange={handleExpiryChange}
                     />
                     <input 
                       type="password" 
                       placeholder="CVV" 
-                      maxLength="4"
+                      maxLength="3"
                       required
                       value={cardForm.cvv}
-                      onChange={(e) => setCardForm({...cardForm, cvv: e.target.value})}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setCardForm({...cardForm, cvv: val});
+                      }}
                     />
                   </div>
                   <div className="card-form-actions">

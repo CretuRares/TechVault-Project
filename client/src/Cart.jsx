@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Cart.css';
 
 const Cart = ({ cartItems, onClose, user, onCheckout, setCartItems }) => {
     
+    const [usePoints, setUsePoints] = useState(false);
+
     // Calculăm prețul total (BigDecimal-ul din Java va primi suma corectă)
-    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    const userPoints = user && user.points ? user.points : 0;
+    const maxDiscount = userPoints / 100; // 100 puncte = 1 RON
+    
+    let discount = 0;
+    if (usePoints) {
+        discount = Math.min(subtotal, maxDiscount);
+    }
+    
+    const total = subtotal - discount;
 
     // Funcție pentru a modifica cantitatea direct în coș (+ / -)
     const updateQuantity = (id, delta) => {
@@ -60,13 +72,39 @@ const Cart = ({ cartItems, onClose, user, onCheckout, setCartItems }) => {
 
                 {cartItems.length > 0 && (
                     <div className="cart-footer">
-                        <div className="total-section">
+                        {user && userPoints > 0 && (
+                            <div className="points-section" style={{ padding: '10px 0', borderBottom: '1px solid #ddd', marginBottom: '10px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={usePoints} 
+                                        onChange={(e) => setUsePoints(e.target.checked)} 
+                                    />
+                                    Folosește punctele ({userPoints} pct = {maxDiscount.toFixed(2)} RON reducere)
+                                </label>
+                            </div>
+                        )}
+                        
+                        {usePoints && discount > 0 && (
+                            <div className="total-section" style={{ fontSize: '14px', color: '#666' }}>
+                                <span>Subtotal:</span>
+                                <span>{subtotal.toFixed(2)} RON</span>
+                            </div>
+                        )}
+                        {usePoints && discount > 0 && (
+                            <div className="total-section" style={{ fontSize: '14px', color: 'green' }}>
+                                <span>Reducere puncte:</span>
+                                <span>-{discount.toFixed(2)} RON</span>
+                            </div>
+                        )}
+
+                        <div className="total-section" style={{ marginTop: '10px' }}>
                             <span>Total de plată:</span>
                             <span className="total-amount">{total.toFixed(2)} RON</span>
                         </div>
                         
                         {user ? (
-                            <button className="checkout-confirm-btn" onClick={onCheckout}>
+                            <button className="checkout-confirm-btn" onClick={() => onCheckout(usePoints)}>
                                 Finalizează Comanda
                             </button>
                         ) : (

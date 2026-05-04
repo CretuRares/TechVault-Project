@@ -8,6 +8,7 @@ import AddProductModal from './AddProductModal';
 import Cart from './Cart';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import UserProfile from './UserProfile';
+import AdminDashboard from './AdminDashboard';
 
 
 
@@ -129,7 +130,7 @@ function App() {
   // Verificăm dacă userul este Admin (pentru scurtătură în cod)
   const isAdmin = user && (user.role?.name === 'ADMIN' || user.role === 'ADMIN');
   
-const handleCheckout = async () => {
+const handleCheckout = async (usePoints = false) => {
     if (!user) {
       alert("Trebuie să fii logat pentru a finaliza comanda!");
       setShowAuth(true);
@@ -147,13 +148,25 @@ const handleCheckout = async () => {
         quantity: item.quantity
       }));
 
-      const response = await axios.post(`http://localhost:8080/api/products/checkout/${user.id}`, orderData);
+      const requestPayload = {
+        items: orderData,
+        usePoints: usePoints
+      };
 
-      setUser(response.data); // Actualizăm punctele userului
+      const response = await axios.post(`http://localhost:8080/api/products/checkout/${user.id}`, requestPayload);
+
+      // Backend-ul returnează acum CheckoutResponseDTO: { user: ..., pointsGained: ... }
+      setUser(response.data.user); 
       setCartItems([]);
       setIsCartOpen(false);
       
-      alert("🎉 Comandă reușită! Ai primit puncte de loialitate.");
+      const pointsGained = response.data.pointsGained;
+      if (pointsGained > 0) {
+        alert(`🎉 Comandă reușită! Ai primit ${pointsGained} puncte de loialitate.`);
+      } else {
+        alert("🎉 Comandă reușită!");
+      }
+      
       fetchProducts(); // Actualizăm stocurile vizuale în pagină
 
     } catch (err) {
@@ -213,7 +226,7 @@ const handleCheckout = async () => {
         <div className="auth-side">
           {user ? (
             <div className="user-info-box">
-              <span className="user-name" onClick={() => navigate('/profile')} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
+              <span className="user-name" onClick={() => navigate(isAdmin ? '/admin' : '/profile')} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
                 Salut, <strong>{user.username}</strong>
               </span>
               {!isAdmin && <span className="user-points">⭐ {user.points || 0} pct</span>}
@@ -323,7 +336,9 @@ const handleCheckout = async () => {
         </main>
       } />
       
+      
       <Route path="/profile" element={<UserProfile user={user} />} />
+      <Route path="/admin" element={<AdminDashboard user={user} />} />
     </Routes>
   </div>
 );

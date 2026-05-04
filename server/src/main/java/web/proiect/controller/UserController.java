@@ -19,6 +19,12 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private web.proiect.repository.CardRepository cardRepository;
+
+    @Autowired
+    private web.proiect.repository.OrderRepository orderRepository;
+
     // 1. Obține toți utilizatorii (util pentru Admin Panel)
     @GetMapping
     public List<User> getAllUsers() {
@@ -58,7 +64,40 @@ public class UserController {
         }
     // 4. Șterge un utilizator
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        return userRepository.findById(id).map(user -> {
+            // Ștergem cardul dacă există
+            cardRepository.findByUserId(id).ifPresent(card -> cardRepository.delete(card));
+            
+            // Ștergem comenzile
+            List<Order> orders = orderRepository.findByUserIdOrderByOrderDateDesc(id);
+            if (!orders.isEmpty()) {
+                orderRepository.deleteAll(orders);
+            }
+            
+            // Ștergem utilizatorul
+            userRepository.delete(user);
+            return ResponseEntity.ok().build();
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // 5. Schimbă rolul unui utilizator
+    @PutMapping("/{id}/role")
+    public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody java.util.Map<String, String> body) {
+        return userRepository.findById(id).map(user -> {
+            String roleStr = body.get("role");
+            if (roleStr != null) {
+                try {
+                    Role newRole = Role.valueOf(roleStr.toUpperCase());
+                    user.setRole(newRole);
+                    userRepository.save(user);
+                    return ResponseEntity.ok(user);
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.badRequest().body("Rol invalid.");
+                }
+            }
+            return ResponseEntity.badRequest().body("Lipsă rol.");
+        }).orElse(ResponseEntity.notFound().build());
     }
 }
