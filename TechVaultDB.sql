@@ -92,3 +92,19 @@ BEGIN
     );
 END
 GO
+
+-- 8. Tabelul pentru Recenzii (Reviews)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[reviews]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE reviews (
+        id BIGINT PRIMARY KEY IDENTITY(1,1),
+        user_id BIGINT NOT NULL,
+        product_id BIGINT NOT NULL,
+        rating INT NOT NULL CHECK(rating >= 1 AND rating <= 5),
+        comment NVARCHAR(MAX),
+        created_at DATETIME2 DEFAULT GETDATE(),
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        FOREIGN KEY (product_id) REFERENCES products(id)
+    );
+END
+GO

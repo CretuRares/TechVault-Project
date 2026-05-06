@@ -8,6 +8,13 @@ function UserProfile({ user }) {
   const [orders, setOrders] = useState([]);
   const [showCardForm, setShowCardForm] = useState(false);
   const [cardForm, setCardForm] = useState({ cardNumber: '', expiryDate: '', cvv: '' });
+  
+  // States for Modals
+  const [selectedProduct, setSelectedProduct] = useState(null); // Pentru detalii produs
+  const [reviewProduct, setReviewProduct] = useState(null); // Pentru lăsare review
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -101,6 +108,28 @@ function UserProfile({ user }) {
     setCardForm({...cardForm, expiryDate: val});
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewProduct) return;
+
+    setIsSubmittingReview(true);
+    try {
+      await axios.post('http://localhost:8080/api/reviews', {
+        userId: user.id,
+        productId: reviewProduct.product.id,
+        rating: reviewForm.rating,
+        comment: reviewForm.comment
+      });
+      alert('Review adăugat cu succes!');
+      setReviewProduct(null);
+      setReviewForm({ rating: 5, comment: '' });
+    } catch (err) {
+      alert('Eroare la adăugarea review-ului. ' + (err.response?.data || ''));
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -190,8 +219,21 @@ function UserProfile({ user }) {
                   <div className="order-items">
                     {order.items.map(item => (
                       <div key={item.id} className="order-item-row">
-                        <span>{item.quantity}x {item.product.name}</span>
-                        <span>{item.price} RON</span>
+                        <div className="order-item-info">
+                          <span 
+                            className="clickable-product-name"
+                            onClick={() => setSelectedProduct(item)}
+                          >
+                            {item.quantity}x {item.product.name}
+                          </span>
+                          <span className="order-item-price">{item.price} RON</span>
+                        </div>
+                        <button 
+                          className="leave-review-btn"
+                          onClick={() => setReviewProduct(item)}
+                        >
+                          ⭐ Lasă un review
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -204,6 +246,71 @@ function UserProfile({ user }) {
           )}
         </section>
       </div>
+
+      {/* MODAL DETALII PRODUS */}
+      {selectedProduct && (
+        <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
+          <div className="modal-content product-details-modal" onClick={e => e.stopPropagation()}>
+            <button className="close-modal-btn" onClick={() => setSelectedProduct(null)}>✕</button>
+            <h3>Detalii Produs comandat</h3>
+            <div className="modal-product-info">
+              {selectedProduct.product.imageUrl && (
+                <img src={selectedProduct.product.imageUrl} alt={selectedProduct.product.name} className="modal-product-img" />
+              )}
+              <div className="modal-product-text">
+                <h4>{selectedProduct.product.name}</h4>
+                <p className="modal-product-category">{selectedProduct.product.category}</p>
+                <p className="modal-product-desc">{selectedProduct.product.description}</p>
+                <div className="modal-order-stats">
+                  <span>Cantitate comandată: <strong>{selectedProduct.quantity}</strong></span>
+                  <span>Preț total: <strong>{selectedProduct.price} RON</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL REVIEW */}
+      {reviewProduct && (
+        <div className="modal-overlay" onClick={() => setReviewProduct(null)}>
+          <div className="modal-content review-modal" onClick={e => e.stopPropagation()}>
+            <button className="close-modal-btn" onClick={() => setReviewProduct(null)}>✕</button>
+            <h3>Lasă un review</h3>
+            <p className="review-product-name">pentru {reviewProduct.product.name}</p>
+            
+            <form onSubmit={handleReviewSubmit} className="review-form">
+              <div className="form-group">
+                <label>Rating (1-5 stele):</label>
+                <div className="rating-selector">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span 
+                      key={star} 
+                      className={`star ${reviewForm.rating >= star ? 'selected' : ''}`}
+                      onClick={() => setReviewForm({...reviewForm, rating: star})}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Comentariu:</label>
+                <textarea 
+                  rows="4" 
+                  placeholder="Spune-ne părerea ta despre acest produs..."
+                  value={reviewForm.comment}
+                  onChange={(e) => setReviewForm({...reviewForm, comment: e.target.value})}
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" className="submit-review-btn" disabled={isSubmittingReview}>
+                {isSubmittingReview ? 'Se trimite...' : 'Trimite Review'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
