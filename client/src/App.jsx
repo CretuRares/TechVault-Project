@@ -9,7 +9,7 @@ import Cart from './Cart';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import UserProfile from './UserProfile';
 import AdminDashboard from './AdminDashboard';
-
+import ProductDetails from './ProductDetails';
 
 
 function App() {
@@ -316,11 +316,11 @@ const handleCheckout = async (usePoints = false) => {
           {filteredProducts.map(p => (
             <div key={p.id} className="product-card">
               <div className="badge">{p.category}</div>
-              <div className="img-container">
+              <div className="img-container" onClick={() => navigate(`/product/${p.id}`)} style={{ cursor: 'pointer' }}>
                 <img src={p.imageUrl || 'https://via.placeholder.com/150'} alt={p.name} />
               </div>
               <div className="product-info">
-                <h3>{p.name}</h3>
+                <h3 onClick={() => navigate(`/product/${p.id}`)} style={{ cursor: 'pointer' }}>{p.name}</h3>
                 <p className="description">{p.description}</p>
                 <div className="price-row">
                   <span className="price">{p.price} <small>RON</small></span>
@@ -339,6 +339,7 @@ const handleCheckout = async (usePoints = false) => {
       
       <Route path="/profile" element={<UserProfile user={user} />} />
       <Route path="/admin" element={<AdminDashboard user={user} />} />
+      <Route path="/product/:id" element={<ProductDetails addToCart={addToCart} isAdmin={isAdmin} openEditModal={openEditModal} products={products} />} />
     </Routes>
   </div>
 );
