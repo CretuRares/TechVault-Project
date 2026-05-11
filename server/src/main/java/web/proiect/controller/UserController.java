@@ -100,4 +100,19 @@ public class UserController {
             return ResponseEntity.badRequest().body("Lipsă rol.");
         }).orElse(ResponseEntity.notFound().build());
     }
+
+    // 6. Actualizează datele utilizatorului (email, parola)
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedData) {
+        return userRepository.findById(id).map(user -> {
+            if (updatedData.getEmail() != null && !updatedData.getEmail().isEmpty()) {
+                user.setEmail(updatedData.getEmail());
+            }
+            if (updatedData.getPassword() != null && !updatedData.getPassword().isEmpty()) {
+                user.setPassword(updatedData.getPassword());
+            }
+            User savedUser = userRepository.save(user);
+            return ResponseEntity.ok(savedUser);
+        }).orElse(ResponseEntity.notFound().build());
+    }
 }

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './UserProfile.css';
 
-function UserProfile({ user }) {
+function UserProfile({ user, setUser }) {
   const [card, setCard] = useState(null);
   const [orders, setOrders] = useState([]);
   const [showCardForm, setShowCardForm] = useState(false);
@@ -14,6 +14,11 @@ function UserProfile({ user }) {
   const [reviewProduct, setReviewProduct] = useState(null); // Pentru lăsare review
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  // States for Account Update
+  const [accountForm, setAccountForm] = useState({ email: user?.email || '', password: '' });
+  const [isUpdatingAccount, setIsUpdatingAccount] = useState(false);
+  const [isEditingAccount, setIsEditingAccount] = useState(false);
 
   const navigate = useNavigate();
 
@@ -130,6 +135,25 @@ function UserProfile({ user }) {
     }
   };
 
+  const handleUpdateAccount = async (e) => {
+    e.preventDefault();
+    setIsUpdatingAccount(true);
+    try {
+      const res = await axios.put(`http://localhost:8080/api/users/${user.id}`, {
+        email: accountForm.email,
+        password: accountForm.password
+      });
+      setUser(res.data); // Actualizăm userul global în App.jsx
+      alert("Datele contului au fost actualizate cu succes!");
+      setAccountForm({ email: res.data.email || '', password: '' }); // resetăm parola și actualizăm emailul curent
+      setIsEditingAccount(false); // Întoarcere la view mode
+    } catch (err) {
+      alert("Eroare la actualizarea contului.");
+    } finally {
+      setIsUpdatingAccount(false);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -140,6 +164,67 @@ function UserProfile({ user }) {
       </div>
 
       <div className="profile-content">
+        {/* SECȚIUNEA DATE CONT */}
+        <section className="profile-section account-section">
+          <h3>⚙️ Setări Cont</h3>
+          {!isEditingAccount ? (
+            <div className="account-details-view">
+              <div className="detail-row">
+                <span className="detail-label">Nume utilizator:</span>
+                <span className="detail-value">{user.username}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Email:</span>
+                <span className="detail-value">{user.email || 'Nespecificat'}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Parolă:</span>
+                <span className="detail-value">********</span>
+              </div>
+              <button className="edit-account-btn" onClick={() => setIsEditingAccount(true)}>
+                Modifică Datele
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="info-text">Aici îți poți actualiza adresa de email și parola.</p>
+              <form className="account-form" onSubmit={handleUpdateAccount}>
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input 
+                    type="email" 
+                    value={accountForm.email} 
+                    onChange={(e) => setAccountForm({...accountForm, email: e.target.value})} 
+                    placeholder="adresa@email.com"
+                    className="account-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Parolă nouă (lasă gol pentru a nu o schimba):</label>
+                  <input 
+                    type="password" 
+                    value={accountForm.password} 
+                    onChange={(e) => setAccountForm({...accountForm, password: e.target.value})} 
+                    placeholder="Introdu noua parolă"
+                    className="account-input"
+                  />
+                </div>
+                <div className="account-form-actions">
+                  <button type="submit" className="save-account-btn" disabled={isUpdatingAccount}>
+                    {isUpdatingAccount ? 'Se salvează...' : 'Salvează'}
+                  </button>
+                  <button type="button" className="cancel-account-btn" onClick={() => {
+                    setIsEditingAccount(false);
+                    setAccountForm({ email: user?.email || '', password: '' });
+                  }}>
+                    Anulează
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+        </section>
+
         {/* SECȚIUNEA CARD */}
         <section className="profile-section card-section">
           <h3>💳 Metoda de plată</h3>

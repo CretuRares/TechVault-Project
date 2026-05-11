@@ -292,6 +292,40 @@
   .profile-content {
     grid-template-columns: 1fr;
   }
+  
+  .profile-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .order-item-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .leave-review-btn {
+    align-self: flex-start;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+
+  .detail-value {
+    word-break: break-all;
+  }
+
+  .account-form-actions {
+    flex-direction: column;
+  }
+
+  .account-form-actions .save-account-btn,
+  .cancel-account-btn {
+    width: 100%;
+  }
 }
 
 /* Modals and Reviews Styling */
@@ -503,4 +537,130 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+/* Account Settings Form */
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.account-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.account-input:focus {
+  outline: none;
+  border-color: #00d2ff;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+}
+
+.save-account-btn {
+  background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.save-account-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+}
+
+.save-account-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.account-details-view {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+}
+
+.detail-row:last-of-type {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: #aaa;
+  font-weight: bold;
+}
+
+.detail-value {
+  color: #fff;
+}
+
+.edit-account-btn {
+  background: transparent;
+  color: #00d2ff;
+  border: 1px solid #00d2ff;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.edit-account-btn:hover {
+  background: rgba(0, 210, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+}
+
+.account-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.account-form-actions .save-account-btn {
+  flex: 1;
+  margin-top: 0;
+}
+
+.cancel-account-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.cancel-account-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

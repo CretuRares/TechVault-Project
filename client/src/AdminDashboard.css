@@ -184,3 +184,34 @@
   transform-origin: top left;
   margin-bottom: 0;
 }
+
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 15px;
+    margin: 20px auto;
+  }
+  
+  .admin-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .users-list-section, .user-details-panel {
+    width: 100%;
+    flex: none;
+  }
+
+  .user-details-panel {
+    position: static;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .admin-header h2 {
+    font-size: 1.5rem;
+  }
+}

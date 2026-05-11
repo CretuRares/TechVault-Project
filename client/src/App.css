@@ -1,8 +1,12 @@
 html, body {
     max-width: 100%;
-    overflow-x: hidden; /* Taie orice conținut care depășește lățimea ecranului */
+    overflow-x: hidden;
     margin: 0;
     padding: 0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 :root {
@@ -52,7 +56,9 @@ body {
 .auth-side, .cart-side {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
+    justify-content: center;
 }
 
 /* Butoane Stil Pastilă Neon */
@@ -497,6 +503,7 @@ body {
     max-width: none;
     justify-content: center;
     margin: 0;
+    flex-wrap: wrap;
   }
 
 

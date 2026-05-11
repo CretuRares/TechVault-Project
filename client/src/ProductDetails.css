@@ -207,3 +207,28 @@
   padding: 50px;
   color: var(--text-light);
 }
+
+@media (max-width: 768px) {
+  .product-details-container {
+    padding: 20px;
+    margin: 20px auto;
+    width: 95%;
+  }
+
+  .product-details-top {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .add-to-cart-large, .admin-edit-btn-large, .back-btn-large {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+}

@@ -10,6 +10,8 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import UserProfile from './UserProfile';
 import AdminDashboard from './AdminDashboard';
 import ProductDetails from './ProductDetails';
+import Contact from './Contact';
+import ImageCarousel from './ImageCarousel';
 
 
 function App() {
@@ -224,6 +226,8 @@ const handleCheckout = async (usePoints = false) => {
       <div className="top-bar">
         {/* PARTEA STÂNGĂ: AUTENTIFICARE */}
         <div className="auth-side">
+          <button className="nav-btn" onClick={() => navigate('/')} style={{ padding: '6px 15px', fontSize: '0.9rem', marginRight: '5px' }}>Acasă</button>
+          <button className="nav-btn" onClick={() => navigate('/contact')} style={{ padding: '6px 15px', fontSize: '0.9rem', marginRight: '10px' }}>Contact</button>
           {user ? (
             <div className="user-info-box">
               <span className="user-name" onClick={() => navigate(isAdmin ? '/admin' : '/profile')} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
@@ -265,7 +269,7 @@ const handleCheckout = async (usePoints = false) => {
         </div>
       </div>
 
-      <div className="logo-section">
+      <div className="logo-section" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
         <LuRadioReceiver className="tech-logo-icon" />
         <h1 className="main-title">TECH<span>VAULT</span></h1>
       </div>
@@ -312,32 +316,36 @@ const handleCheckout = async (usePoints = false) => {
 
     <Routes>
       <Route path="/" element={
-        <main className="product-grid">
-          {filteredProducts.map(p => (
-            <div key={p.id} className="product-card">
-              <div className="badge">{p.category}</div>
-              <div className="img-container" onClick={() => navigate(`/product/${p.id}`)} style={{ cursor: 'pointer' }}>
-                <img src={p.imageUrl || 'https://via.placeholder.com/150'} alt={p.name} />
-              </div>
-              <div className="product-info">
-                <h3 onClick={() => navigate(`/product/${p.id}`)} style={{ cursor: 'pointer' }}>{p.name}</h3>
-                <p className="description">{p.description}</p>
-                <div className="price-row">
-                  <span className="price">{p.price} <small>RON</small></span>
-                  {isAdmin ? (
-                    <button className="admin-edit-btn" onClick={() => openEditModal(p)}>⚙️ Modifică</button>
-                  ) : (
-                    <button className="buy-btn" onClick={() => addToCart(p)}>🛒</button>
-                  )}
+        <>
+          <ImageCarousel />
+          <main className="product-grid">
+            {filteredProducts.map(p => (
+              <div key={p.id} className="product-card">
+                <div className="badge">{p.category}</div>
+                <div className="img-container" onClick={() => navigate(`/product/${p.id}`)} style={{ cursor: 'pointer' }}>
+                  <img src={p.imageUrl || 'https://via.placeholder.com/150'} alt={p.name} />
+                </div>
+                <div className="product-info">
+                  <h3 onClick={() => navigate(`/product/${p.id}`)} style={{ cursor: 'pointer' }}>{p.name}</h3>
+                  <p className="description">{p.description}</p>
+                  <div className="price-row">
+                    <span className="price">{p.price} <small>RON</small></span>
+                    {isAdmin ? (
+                      <button className="admin-edit-btn" onClick={() => openEditModal(p)}>⚙️ Modifică</button>
+                    ) : (
+                      <button className="buy-btn" onClick={() => addToCart(p)}>🛒</button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </main>
+            ))}
+          </main>
+        </>
       } />
       
       
-      <Route path="/profile" element={<UserProfile user={user} />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/profile" element={<UserProfile user={user} setUser={setUser} />} />
       <Route path="/admin" element={<AdminDashboard user={user} />} />
       <Route path="/product/:id" element={<ProductDetails addToCart={addToCart} isAdmin={isAdmin} openEditModal={openEditModal} products={products} />} />
     </Routes>
