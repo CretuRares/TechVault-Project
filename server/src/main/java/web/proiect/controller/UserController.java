@@ -9,6 +9,9 @@ import web.proiect.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import web.proiect.model.*;
 
 @RestController
@@ -37,13 +40,29 @@ public class UserController {
         return userRepository.findById(id);
     }
 
-    // 3. Înregistrare utilizator nou (Register)
+    // Metodă pentru criptarea parolei
+    private String hashPassword(String password) {
+        if (password == null) return null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Eroare la criptarea parolei", e);
+        }
+    }
+
     @PostMapping("/register")
     public User registerUser(@RequestBody User user) {
-        // În mod normal, aici am codifica parola, dar pentru început o salvăm așa
-        if (user.getRole() == null) {
-            user.setRole(Role.USER); // Setăm rolul implicit ca USER
+        // Ignorăm orice rol primit de la client (pentru a preveni modificările din F12)
+        // și forțăm rolul de USER pentru conturile noi.
+        user.setRole(Role.USER);
+        
+        // Criptăm parola înainte de a o salva
+        if (user.getPassword() != null) {
+            user.setPassword(hashPassword(user.getPassword()));
         }
+        
         return userRepository.save(user);
     }
 
@@ -52,8 +71,8 @@ public class UserController {
             // Căutăm utilizatorul în baza de date
             User user = userRepository.findByUsername(loginData.getUsername());
 
-            // Verificăm dacă user-ul există ȘI dacă parola coincide
-            if (user != null && user.getPassword().equals(loginData.getPassword())) {
+            // Verificăm dacă user-ul există ȘI dacă parola criptată coincide
+            if (user != null && user.getPassword().equals(hashPassword(loginData.getPassword()))) {
                 return ResponseEntity.ok(user); // Status 200 + obiectul User
             }
 
@@ -109,7 +128,7 @@ public class UserController {
                 user.setEmail(updatedData.getEmail());
             }
             if (updatedData.getPassword() != null && !updatedData.getPassword().isEmpty()) {
-                user.setPassword(updatedData.getPassword());
+                user.setPassword(hashPassword(updatedData.getPassword()));
             }
             User savedUser = userRepository.save(user);
             return ResponseEntity.ok(savedUser);

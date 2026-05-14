@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import web.proiect.model.*;
 import web.proiect.repository.*;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -20,21 +23,20 @@ public class DataInitializer implements CommandLineRunner {
  @Override
 public void run(String... args) throws Exception {
     
-
     if (userRepository.count() == 0) {
-                userRepository.save(new User(
-                null, 
-                "admin_tech", 
-                "admin123", 
-                0, 
-                "admin@techvault.ro", 
-                Role.ADMIN
-            ));
+        userRepository.save(new User(
+        null, 
+        "admin_tech", 
+        hashPassword("admin123"), 
+        0, 
+        "admin@techvault.ro", 
+        Role.ADMIN
+    ));
 
             userRepository.save(new User(
                 null, 
                 "andrei_popescu", 
-                "parola123", 
+                hashPassword("parola123"), 
                 2500, 
                 "andrei.p@gmail.com", 
                 Role.USER
@@ -43,7 +45,7 @@ public void run(String... args) throws Exception {
             userRepository.save(new User(
                 null, 
                 "elena_ionescu", 
-                "secret789", 
+                hashPassword("secret789"), 
                 0, 
                 "elena.io@yahoo.com", 
                 Role.USER
@@ -51,7 +53,6 @@ public void run(String... args) throws Exception {
 
             System.out.println("✅ Utilizatorii au fost inițializați cu succes!");
     }
-
 
     if (productRepository.count() == 0) {
         //1.Placi video
@@ -537,5 +538,16 @@ public void run(String... args) throws Exception {
 
         System.out.println("✅ Tabelul Products a fost populat cu componente tech reale!");
     }
-}
+    }
+
+    private String hashPassword(String password) {
+        if (password == null) return null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Eroare la criptarea parolei", e);
+        }
+    }
 }
